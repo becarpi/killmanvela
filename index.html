@@ -1,1 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR App TKI — IAD</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f172a; font-family: 'Segoe UI', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .card { background: #1e293b; border-radius: 20px; padding: 36px 32px; max-width: 480px; width: 100%; text-align: center; border: 1px solid #334155; }
+  .badge { color: #e94560; font-size: 11px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; }
+  h1 { color: white; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .sub { color: #64748b; font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
+  .input-wrap { display: flex; gap: 8px; margin-bottom: 28px; }
+  input { flex: 1; background: #0f172a; border: 1.5px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 14px; outline: none; transition: border 0.2s; }
+  input:focus { border-color: #e94560; }
+  input::placeholder { color: #475569; }
+  button { background: #e94560; color: white; border: none; border-radius: 10px; padding: 12px 18px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  button:hover { background: #c73652; }
+  .qr-box { background: white; border-radius: 14px; padding: 20px; display: inline-block; margin-bottom: 20px; }
+  .qr-box img { display: block; width: 220px; height: 220px; }
+  .placeholder { width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; }
+  .placeholder-icon { font-size: 48px; opacity: 0.3; }
+  .placeholder-text { color: #64748b; font-size: 13px; }
+  .instruction { background: rgba(233,69,96,0.08); border: 1px solid rgba(233,69,96,0.2); border-radius: 10px; padding: 14px 16px; text-align: left; }
+  .instruction-title { color: #e94560; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .instruction li { color: #94a3b8; font-size: 13px; line-height: 1.7; margin-left: 16px; }
+  .url-display { color: #64748b; font-size: 12px; margin-top: 10px; word-break: break-all; }
+  .download-btn { display: inline-block; margin-top: 14px; background: transparent; color: #64748b; border: 1px solid #334155; border-radius: 8px; padding: 8px 20px; font-size: 13px; cursor: pointer; text-decoration: none; }
+  .download-btn:hover { color: white; border-color: #475569; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="badge">IAD · MANAGERS PLATINO</div>
+  <h1>QR — Test Thomas-Kilmann</h1>
+  <p class="sub">Pega aquí la URL donde esté alojada la app<br>para generar el QR de la sesión.</p>
 
+  <div class="input-wrap">
+    <input type="url" id="urlInput" placeholder="https://tu-url.com/tki-iad" />
+    <button onclick="generateQR()">Generar</button>
+  </div>
+
+  <div class="qr-box" id="qrBox">
+    <div class="placeholder">
+      <div class="placeholder-icon">📱</div>
+      <div class="placeholder-text">El QR aparecerá aquí</div>
+    </div>
+  </div>
+
+  <div id="urlDisplay" class="url-display" style="display:none;"></div>
+  <div id="downloadWrap" style="display:none;">
+    <a id="downloadBtn" class="download-btn" download="QR_TKI_IAD.png">⬇ Descargar QR</a>
+  </div>
+
+  <br><br>
+  <div class="instruction">
+    <div class="instruction-title">CÓMO USARLO EN LA SESIÓN</div>
+    <ol>
+      <li>Sube la app a <strong style="color:#e2e8f0">CodePen, Vercel, Netlify</strong> u otra plataforma</li>
+      <li>Copia la URL pública y pégala arriba</li>
+      <li>Genera el QR y proyéctalo en la pantalla LED del Sant Pau</li>
+      <li>Los participantes lo escanean con el móvil y hacen el test</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+function generateQR() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) { alert('Por favor, introduce una URL válida.'); return; }
+
+  const size = 220;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=0f172a&qzone=1&format=png`;
+
+  const box = document.getElementById('qrBox');
+  box.innerHTML = `<img src="${qrUrl}" alt="QR Code" id="qrImg" />`;
+
+  document.getElementById('urlDisplay').style.display = 'block';
+  document.getElementById('urlDisplay').textContent = url;
+
+  document.getElementById('downloadWrap').style.display = 'block';
+  document.getElementById('downloadBtn').href = qrUrl;
+}
+
+// Allow Enter key
+document.getElementById('urlInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') generateQR();
+});
+</script>
+</body>
+</html>
